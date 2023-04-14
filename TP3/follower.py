@@ -73,14 +73,14 @@ class Follower:
 
     def a_deux_point(self, k_p, k_i, k_d, coeff_f, coeff_a, distance_f, distance_a):
         #calcule vitesse freinage
-        a_f = coef_f
+        a_f = coeff_f
         D_f = distance_f
         diff_f = self.sonicsensor.distance() - D_f
         coef_f = min(max(a_f*diff_f,0),50)
 
 
         #calcule vitesse acceleration 
-        a_a = coef_a
+        a_a = coeff_a
         D_a = distance_a
         diff_a = self.sonicsensor.distance() - D_a
         coef_a = min(max(a_a*diff_a,0),50)
