@@ -43,12 +43,12 @@ class Follower:
             wait(self.tau * 1000)
             write_log(self.error_history)
 
-    def a_un_point(self, k_p, k_i, k_d):
+    def a_un_point(self, k_p, k_i, k_d, distance, coeff_a):
         while True:
             #calcul speed
             # D = 150 / d(t) => distance
-            D = 150
-            a = 1
+            D = distance
+            a = coeff_a
             diff = self.sonicsensor.distance() - D
             coef = max(min(50, a*(diff)),0)
             self.speed = int(250*(coef/100))
