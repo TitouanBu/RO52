@@ -51,7 +51,7 @@ class Follower:
             a = 1
             diff = self.sonicsensor.distance() - D
             coef = max(min(50, a*(diff)),0)
-            self.speed = int(250*(diff/100))
+            self.speed = int(250*(coef/100))
             # Cas noir :
             if self.sensor.reflection() < self.limit:
                 if self.is_white:
@@ -71,7 +71,23 @@ class Follower:
             wait(self.tau * 1000)
             write_log(self.error_history)
 
-    def a_deux_point(self, k_p, k_i, k_d):
+    def a_deux_point(self, k_p, k_i, k_d, coeff_f, coeff_a, distance_f, distance_a):
+        #calcule vitesse freinage
+        a_f = coef_f
+        D_f = distance_f
+        diff_f = self.sonicsensor.distance() - D_f
+        coef_f = min(max(a_f*diff_f,0),50)
+
+
+        #calcule vitesse acceleration 
+        a_a = coef_a
+        D_a = distance_a
+        diff_a = self.sonicsensor.distance() - D_a
+        coef_a = min(max(a_a*diff_a,0),50)
+
+        #calcule vitesse finale 
+        self.speed = int(250*min(coef_f,coef_a))
+
         while True:
             while self.sonicsensor.distance() < 150 :
                 self.drivebase.stop()
