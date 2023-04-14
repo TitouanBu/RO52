@@ -1,11 +1,11 @@
 from pybricks.robotics import DriveBase
-from pybricks.ev3devices import Motor, ColorSensor
+from pybricks.ev3devices import Motor, ColorSensor , UltrasonicSensor
 from pybricks.tools import wait, StopWatch
 from log import write_log,clear_log
 
 
 class Leader:
-    def __init__(self, left_motor_port, right_motor_port, color_sensor_port,
+    def __init__(self, left_motor_port, right_motor_port, color_sensor_port, sonic_sensor_port,
                 limit, wheel_diameter = 55.5, axle_track = 104, tau = 0.1, max_angle = 90):
         
         self.max_angle = max_angle
@@ -16,14 +16,18 @@ class Leader:
         self.limit = limit
         self.drivebase = DriveBase(Motor(left_motor_port), Motor(right_motor_port), wheel_diameter, axle_track)
         self.sensor = ColorSensor(color_sensor_port)
+        self.sonicsensor = UltrasonicSensor(sonic_sensor_port)
         self.timer = StopWatch()
-        self.speed = int(250 * 0.4)
+        self.speed = int(250 * 0.5)
 
     def follow_line(self, k_p, k_i, k_d, time = 2000):
         while True:
             self.timer.reset()
             self.timer.resume()
             while self.timer.time() < time:
+                # tout ou rien : test distance avec autre robot 
+                if self.sonicsensor.distance() > 150 :
+                    break
                 # Cas noir :
                 if self.sensor.reflection() < self.limit:
                     if self.is_white:
