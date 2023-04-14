@@ -23,16 +23,16 @@ ev3 = EV3Brick()
 ############################### FOLLOWER
 
 #################### TOUT OU RIEN
-follower1 = Follower(Port.A,Port.B,Port.S3,Port.S1,50,max_angle=100)
-follower1.tout_ou_rien(0.5, 0.5, 0.05)
+# follower1 = Follower(Port.A,Port.B,Port.S3,Port.S1,50,max_angle=100)
+# follower1.tout_ou_rien(0.5, 0.5, 0.05)
 
 #################### A UN POINT
-follower1 = Follower(Port.A,Port.B,Port.S3,Port.S1,50,max_angle=100)
-follower1.a_un_point(0.5, 0.5, 0.05,150,0.5)
+# follower1 = Follower(Port.A,Port.B,Port.S3,Port.S1,50,max_angle=100)
+# follower1.a_un_point(0.5, 0.5, 0.05,150,0.5)
 
 #################### A DEUX POINT
 follower1 = Follower(Port.A,Port.B,Port.S3,Port.S1,50,max_angle=100)
-follower1.a_un_point(0.5, 0.5, 0.05,150,0.5)
+follower1.a_deux_point(0.5, 0.5, 0.05,1,1,100,300)
 
 #Valeurs pour différents parcours
 #0.5, 0.5, 0.05, 150 => Parcours en 8
