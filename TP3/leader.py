@@ -1,6 +1,7 @@
 from pybricks.robotics import DriveBase
 from pybricks.ev3devices import Motor, ColorSensor
 from pybricks.tools import wait, StopWatch
+from log import write_log,clear_log
 
 
 class Leader:
@@ -39,9 +40,11 @@ class Leader:
                     else:
                         self._clean()
                     self.drivebase.drive(self.speed, self._angle(k_p, k_i, k_d))
-                # wait(self.tau * 1000)
-                self.drivebase.stop()
-                wait(time)
+                wait(self.tau * 1000)
+                write_log(self.error_history)
+                
+            self.drivebase.stop()
+            wait(time)
 
 
     def _current_err(self):
