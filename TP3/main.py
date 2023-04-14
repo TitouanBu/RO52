@@ -7,6 +7,7 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 from leader import Leader
+from follower import Follower
 from log import clear_log
 
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
@@ -15,8 +16,15 @@ from log import clear_log
 # Create your objects here.
 clear_log()
 ev3 = EV3Brick()
-leader1 = Leader(Port.A,Port.B,Port.S3,50,max_angle=100)
-leader1.follow_line(0.5, 0.5, 0.05, 5000)
+############################### LEADER
+# leader1 = Leader(Port.A,Port.B,Port.S3,50,max_angle=100)
+# leader1.follow_line(0.5, 0.5, 0.05, 5000)
+
+############################### FOLLOWER
+
+#################### TOUT OU RIEN
+follower1 = Follower(Port.A,Port.B,Port.S3,Port.S1,50,max_angle=100)
+follower1.tout_ou_rien(0.5, 0.5, 0.05)
 
 #Valeurs pour différents parcours
 #0.5, 0.5, 0.05, 150 => Parcours en 8

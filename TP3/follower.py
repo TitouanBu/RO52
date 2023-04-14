@@ -1,7 +1,7 @@
 from pybricks.robotics import DriveBase
 from pybricks.ev3devices import Motor, ColorSensor , UltrasonicSensor
 from pybricks.tools import wait
-from logCSV import write_log,clear_log
+from log import write_log,clear_log
 
 class Follower:
     def __init__(self, left_motor_port, right_motor_port, color_sensor_port,sonic_sensor_port,
