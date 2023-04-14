@@ -86,7 +86,7 @@ class Follower:
         coef_a = min(max(a_a*diff_a,0),50)
 
         #calcule vitesse finale 
-        self.speed = int(250*min(coef_f,coef_a))
+        self.speed = int(250*min(coef_f,coef_a)/100)
 
         while True:
             while self.sonicsensor.distance() < 150 :
