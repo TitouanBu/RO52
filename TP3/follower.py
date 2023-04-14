@@ -43,6 +43,57 @@ class Follower:
             wait(self.tau * 1000)
             write_log(self.error_history)
 
+    def a_un_point(self, k_p, k_i, k_d):
+        while True:
+            #calcul speed
+            # D = 150 / d(t) => distance
+            D = 150
+            a = 1
+            diff = self.sonicsensor.distance() - D
+            coef = max(min(50, a*(diff)),0)
+            self.speed = int(250*(diff/100))
+            # Cas noir :
+            if self.sensor.reflection() < self.limit:
+                if self.is_white:
+                    self._clean()
+                else:
+                    self.old_error = self.error_history
+                    self.error_history += self._current_err()
+                self.drivebase.drive(self.speed, - self._angle(k_p, k_i, k_d))
+            # Cas blanc :
+            else:
+                if self.is_white:
+                    self.old_error = self.error_history
+                    self.error_history += self._current_err()
+                else:
+                    self._clean()
+                self.drivebase.drive(self.speed, self._angle(k_p, k_i, k_d))
+            wait(self.tau * 1000)
+            write_log(self.error_history)
+
+    def a_deux_point(self, k_p, k_i, k_d):
+        while True:
+            while self.sonicsensor.distance() < 150 :
+                self.drivebase.stop()
+                wait(500)
+            # Cas noir :
+            if self.sensor.reflection() < self.limit:
+                if self.is_white:
+                    self._clean()
+                else:
+                    self.old_error = self.error_history
+                    self.error_history += self._current_err()
+                self.drivebase.drive(self.speed, - self._angle(k_p, k_i, k_d))
+            # Cas blanc :
+            else:
+                if self.is_white:
+                    self.old_error = self.error_history
+                    self.error_history += self._current_err()
+                else:
+                    self._clean()
+                self.drivebase.drive(self.speed, self._angle(k_p, k_i, k_d))
+            wait(self.tau * 1000)
+            write_log(self.error_history)
 
     def _current_err(self):
         return abs(self.sensor.reflection() - self.limit)
