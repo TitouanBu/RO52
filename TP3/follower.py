@@ -22,9 +22,9 @@ class Follower:
 
     def tout_ou_rien(self, k_p, k_i, k_d):
         while True:
-            while self.sonicsensor.distance() < 150 :
-                self.drivebase.stop()
-                wait(500)
+            if self.sonicsensor.distance() < 150 :
+                self.speed = 0
+                # wait(500)
             # Cas noir :
             if self.sensor.reflection() < self.limit:
                 if self.is_white:
@@ -73,27 +73,26 @@ class Follower:
             write_log(self.sonicsensor.distance(),self.speed)
 
     def a_deux_point(self, k_p, k_i, k_d, coeff_f, coeff_a, distance_f, distance_a):
-        #calcule vitesse freinage
-        a_f = coeff_f
-        D_f = distance_f
-        diff_f = self.sonicsensor.distance() - D_f
-        coef_f = min(max(a_f*diff_f,0),50)
-
-
-        #calcule vitesse acceleration 
-        a_a = coeff_a
-        D_a = distance_a
-        diff_a = self.sonicsensor.distance() - D_a
-        coef_a = min(max(a_a*diff_a,0,self.previous_coeff),50)
-
-        #calcule vitesse finale 
-        self.speed = int(350*min(coef_f,coef_a)/100)
-        self.previous_coeff = coef_a
-
         while True:
-            while self.sonicsensor.distance() < 150 :
-                self.drivebase.stop()
-                wait(500)
+            #calcule vitesse freinage
+            a_f = coeff_f
+            D_f = distance_f
+            diff_f = self.sonicsensor.distance() - D_f
+            coef_f = min(max(a_f*diff_f,0),50)
+
+
+            #calcule vitesse acceleration 
+            a_a = coeff_a
+            D_a = distance_a
+            diff_a = self.sonicsensor.distance() - D_a
+            coef_a = min(max(a_a*diff_a,0,self.previous_coeff),50)
+
+            #calcule vitesse finale 
+            self.speed = int(350*min(coef_f,coef_a)/100)
+            self.previous_coeff = coef_a
+            if self.sonicsensor.distance() < 150 :
+                self.speed = 0
+                # wait(500)
             # Cas noir :
             if self.sensor.reflection() < self.limit:
                 if self.is_white:
