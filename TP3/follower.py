@@ -16,7 +16,7 @@ class Follower:
         self.sonicsensor = UltrasonicSensor(sonic_sensor_port)
         self.drivebase = DriveBase(Motor(left_motor_port), Motor(right_motor_port), wheel_diameter, axle_track)
         self.sensor = ColorSensor(color_sensor_port)
-        self.speed = int(250 * 0.5)
+        self.speed = int(350 * 0.5)
         self.previous_coeff = 0.5
 
 
@@ -52,7 +52,7 @@ class Follower:
             a = coeff_a
             diff = self.sonicsensor.distance() - D
             coef = max(min(50, a*(diff)),0)
-            self.speed = int(250*(coef/100))
+            self.speed = int(350*(coef/100))
             # Cas noir :
             if self.sensor.reflection() < self.limit:
                 if self.is_white:
@@ -87,7 +87,7 @@ class Follower:
         coef_a = min(max(a_a*diff_a,0,self.previous_coeff),50)
 
         #calcule vitesse finale 
-        self.speed = int(250*min(coef_f,coef_a)/100)
+        self.speed = int(350*min(coef_f,coef_a)/100)
         self.previous_coeff = coef_a
 
         while True:

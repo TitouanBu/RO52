@@ -32,7 +32,7 @@ ev3 = EV3Brick()
 
 #################### A DEUX POINT
 follower1 = Follower(Port.A,Port.B,Port.S3,Port.S1,50,max_angle=100)
-follower1.a_deux_point(0.5, 0.5, 0.05,1,1,100,300)
+follower1.a_deux_point(0.5, 0.5, 0.05,0.5,0.5,100,300)
 
 #Valeurs pour différents parcours
 #0.5, 0.5, 0.05, 150 => Parcours en 8
