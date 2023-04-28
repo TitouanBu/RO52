@@ -17,7 +17,8 @@ class Leader:
         self.drivebase = DriveBase(Motor(left_motor_port), Motor(right_motor_port), wheel_diameter, axle_track)
         self.sensor = ColorSensor(color_sensor_port)
         self.timer = StopWatch()
-        self.speed = int(250 * 0.4)
+        self.speed = int(150)
+        # self.speed = int(250 * 0.4)
 
     def follow_line(self, k_p, k_i, k_d, time = 2000):
         while True:
@@ -41,7 +42,7 @@ class Leader:
                         self._clean()
                     self.drivebase.drive(self.speed, self._angle(k_p, k_i, k_d))
                 wait(self.tau * 1000)
-                write_log(self.error_history)
+                #write_log(self.error_history)
                 
             self.drivebase.stop()
             wait(time)
