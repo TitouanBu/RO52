@@ -41,7 +41,7 @@ class Follower:
                     self._clean()
                 self.drivebase.drive(self.speed, self._angle(k_p, k_i, k_d))
             wait(self.tau * 1000)
-            write_log(self.error_history)
+            write_log(self.sonicsensor.distance(),self.speed)
 
     def a_un_point(self, k_p, k_i, k_d, distance, coeff_a):
         while True:
@@ -69,7 +69,7 @@ class Follower:
                     self._clean()
                 self.drivebase.drive(self.speed, self._angle(k_p, k_i, k_d))
             wait(self.tau * 1000)
-            write_log(self.error_history)
+            write_log(self.sonicsensor.distance(),self.speed)
 
     def a_deux_point(self, k_p, k_i, k_d, coeff_f, coeff_a, distance_f, distance_a):
         #calcule vitesse freinage
@@ -109,7 +109,7 @@ class Follower:
                     self._clean()
                 self.drivebase.drive(self.speed, self._angle(k_p, k_i, k_d))
             wait(self.tau * 1000)
-            write_log(self.error_history)
+            write_log(self.sonicsensor.distance(),self.speed)
 
     def _current_err(self):
         return abs(self.sensor.reflection() - self.limit)
