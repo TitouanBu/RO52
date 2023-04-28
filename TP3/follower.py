@@ -17,6 +17,7 @@ class Follower:
         self.drivebase = DriveBase(Motor(left_motor_port), Motor(right_motor_port), wheel_diameter, axle_track)
         self.sensor = ColorSensor(color_sensor_port)
         self.speed = int(250 * 0.5)
+        self.previous_coeff = 0.5
 
 
     def tout_ou_rien(self, k_p, k_i, k_d):
@@ -83,10 +84,11 @@ class Follower:
         a_a = coeff_a
         D_a = distance_a
         diff_a = self.sonicsensor.distance() - D_a
-        coef_a = min(max(a_a*diff_a,0),50)
+        coef_a = min(max(a_a*diff_a,0,self.previous_coeff),50)
 
         #calcule vitesse finale 
         self.speed = int(250*min(coef_f,coef_a)/100)
+        self.previous_coeff = coef_a
 
         while True:
             while self.sonicsensor.distance() < 150 :
