@@ -3,6 +3,7 @@ from pybricks.hubs import EV3Brick
 from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
                                  InfraredSensor, UltrasonicSensor, GyroSensor)
 from pybricks.parameters import Port, Stop, Direction, Button, Color
+from pybricks.messaging import BluetoothMailboxServer, TextMailbox
 from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
@@ -17,6 +18,24 @@ from log import clear_log
 clear_log()
 ev3 = EV3Brick()
 ############################### LEADER
+
+# au démarrage :
+server = BluetoothMailboxServer
+channel = TextMailbox("speed",server)
+try:
+    server.wait_for_connection()
+except:
+    # tout ou rien
+    pass
+
+
+
+# à integrer dans le cycle loop :
+try:
+    channel.send("speed")
+except:
+    # tout ou rien
+    pass
 # leader1 = Leader(Port.A,Port.B,Port.S3,50,max_angle=100)
 # leader1.follow_line(0.5, 0.5, 0.05, 5000)
 
