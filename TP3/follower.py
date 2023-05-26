@@ -1,3 +1,4 @@
+from pybricks.hubs import EV3Brick
 from pybricks.robotics import DriveBase
 from pybricks.ev3devices import Motor, ColorSensor , UltrasonicSensor
 from pybricks.tools import wait
@@ -21,10 +22,17 @@ class Follower:
 
 
     def tout_ou_rien(self, k_p, k_i, k_d):
+        ev3 = EV3Brick()
+        connected = False
+        while not connected:
+            try:
+                client.connect("maestro")
+                connected = True
+                ev3.speaker.beep(850,1000)
+            except:
+                pass
+
         while True:
-            if self.sonicsensor.distance() < 150 :
-                self.speed = 0
-                # wait(500)
             # Cas noir :
             if self.sensor.reflection() < self.limit:
                 if self.is_white:
@@ -32,7 +40,6 @@ class Follower:
                 else:
                     self.old_error = self.error_history
                     self.error_history += self._current_err()
-                self.drivebase.drive(self.speed, - self._angle(k_p, k_i, k_d))
             # Cas blanc :
             else:
                 if self.is_white:
@@ -40,7 +47,17 @@ class Follower:
                     self.error_history += self._current_err()
                 else:
                     self._clean()
-                self.drivebase.drive(self.speed, self._angle(k_p, k_i, k_d))
+
+            if connected == False:
+                if self.sonicsensor.distance() < 150 :
+                    self.speed = 0
+                    # wait(500)
+                else:
+                    self.speed = 250
+            else:
+                self.speed = float(channel.read())
+
+            self.drivebase.drive(self.speed, self._angle(k_p, k_i, k_d))
             wait(self.tau * 1000)
             write_log(self.sonicsensor.distance(),self.speed)
 

@@ -41,10 +41,21 @@ class Leader:
                     else:
                         self._clean()
                     self.drivebase.drive(self.speed, self._angle(k_p, k_i, k_d))
+
+                try:
+                    channel.send(self.speed)
+                except:
+                    pass
                 wait(self.tau * 1000)
                 #write_log(self.error_history)
                 
             self.drivebase.stop()
+            self.speed = 0
+            try:
+                channel.send(self.speed)
+            except:
+                pass
+            
             wait(time)
 
 

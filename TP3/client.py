@@ -4,7 +4,10 @@ from pybricks.messaging import BluetoothMailboxClient, TextMailbox
 client = BluetoothMailboxClient()
 channel = TextMailbox("speed", client)
 
-client.connect("ev3dev")
-
+try:
+    client.connect("maestro")
+except:
+    # Tout ou rien
+    pass
 # while loop
 speed = float(channel.read())
