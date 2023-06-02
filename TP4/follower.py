@@ -1,13 +1,12 @@
 from pybricks.hubs import EV3Brick
 from pybricks.robotics import DriveBase
 from pybricks.ev3devices import Motor, ColorSensor , UltrasonicSensor, GyroSensor
-from pybricks.tools import wait,DataLog
+from pybricks.tools import wait,DataLog, StopWatch
 from math import cos, sin, radians
 
 class Follower:
     def __init__(self, left_motor_port, right_motor_port, color_sensor_port,sonic_sensor_port, gyro_sensor_port,
-                limit, wheel_diameter = 55.5, axle_track = 104, tau = 0.1, max_angle = 100):
-        
+                limit, wheel_diameter = 55.5, axle_track = 70, tau = 0.1, max_angle = 100):
         self.max_angle = max_angle
         self.tau  = tau
         self.old_error = 0
@@ -27,6 +26,8 @@ class Follower:
         self.distance = 0
         self.observed_speed = 0
         self.turn_rate = 0
+        self.timer = StopWatch()
+        self.gyrosensor.reset_angle(0)
 
     def a_deux_point(self, k_p, k_i, k_d, coeff_f, coeff_a, distance_f, distance_a):
         while True:
@@ -49,6 +50,10 @@ class Follower:
                 self.speed = 0
                 # wait(500)
 
+            # Timer 
+            self.timer.reset()
+            self.timer.resume()
+
             # Cas noir :
             if self.sensor.reflection() < self.limit:
                 if self.is_white:
@@ -57,6 +62,7 @@ class Follower:
                     self.old_error = self.error_history
                     self.error_history += self._current_err()
                 self.drivebase.drive(self.speed, - self._angle(k_p, k_i, k_d))
+                self.turn_rate = - self._angle(k_p, k_i, k_d)
             # Cas blanc :
             else:
                 if self.is_white:
@@ -65,12 +71,21 @@ class Follower:
                 else:
                     self._clean()
                 self.drivebase.drive(self.speed, self._angle(k_p, k_i, k_d))
+                self.turn_rate = self._angle(k_p, k_i, k_d)
             wait(self.tau * 1000)
-            self.actualize_position_drivebase()
-            self.log_file.log(self.distance,self.observed_speed,self.angle,self.turn_rate,self.x,self.y)
+            # self.actualize_position_drivebase()
+            # self.actualize_position_gyro()
+            self.actualize_position_drive(self.turn_rate)
 
-    def actualize_position_drive(self):
-        pass
+    def actualize_position_drive(self,drive_angle):
+        old_angle = self.angle
+        self.angle = drive_angle*(self.timer.time()/1000)
+        #old_distance = self.distance
+        self.distance = (self.speed*(self.timer.time()))/1000
+            
+        self.x = self.x + (self.distance)*cos((self.angle+old_angle)/2)
+        self.y = self.y + (self.distance)*sin((self.angle+old_angle)/2)
+        self.log_file.log(self.distance,self.observed_speed,self.angle,self.timer.time(),self.x,self.y)
 
     def actualize_position_drivebase(self):
         state = self.drivebase.state()
@@ -80,22 +95,24 @@ class Follower:
         self.distance = state[0]
         old_observed_speed = self.observed_speed
         self.observed_speed = state[1]
-        old_turn_rate = self.turn_rate
-        self.turn_rate = state[3]
+        """old_turn_rate = self.turn_rate
+        self.turn_rate = state[3]"""
             
         self.x = self.x + (self.distance-old_distance)*cos((self.angle+old_angle)/2)
         self.y = self.y + (self.distance-old_distance)*sin((self.angle+old_angle)/2)
+        self.log_file.log(self.distance,self.observed_speed,self.angle,self.turn_rate,self.x,self.y)
 
     def actualize_position_gyro(self):
         old_angle = self.angle
-        self.angle = radians(self.gyrosensor.angle())
-        old_distance = self.distance
-        self.distance = V*t
-        old_observed_speed = self.observed_speed
-        self.observed_speed = self.gyrosensor.speed()
+        angle = self.gyrosensor.angle()
+        self.angle = radians(angle)
+        #old_distance = self.distance
+        self.distance = (self.speed*(self.timer.time()))/1000
             
-        self.x = self.x + (self.distance-old_distance)*cos((self.angle+old_angle)/2)
-        self.y = self.y + (self.distance-old_distance)*sin((self.angle+old_angle)/2)
+        self.x = self.x + (self.distance)*cos((self.angle+old_angle)/2)
+        self.y = self.y + (self.distance)*sin((self.angle+old_angle)/2)
+        self.log_file.log(self.distance,self.observed_speed,angle,self.timer.time(),self.x,self.y)
+        self.gyrosensor.reset_angle(angle)
 
     def _current_err(self):
         return abs(self.sensor.reflection() - self.limit)

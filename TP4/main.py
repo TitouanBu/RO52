@@ -14,7 +14,6 @@ from follower import Follower
 
 # Create your objects here.
 ev3 = EV3Brick()
-############################### LEADER
 
 #################### A DEUX POINT
 follower1 = Follower(Port.A,Port.B,Port.S3,Port.S1,Port.S2,50,max_angle=100)
