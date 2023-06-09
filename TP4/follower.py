@@ -121,8 +121,6 @@ class Follower:
 
 
     def kalman(self,speed_angle):
-
-
         #calcul angle theoriqe
         estimation_angle = self.angle_kalman + self.timer.time()*speed_angle + radian(10) # constante à définir
        
@@ -137,7 +135,6 @@ class Follower:
 
         self.variation = (1-K)*self.variation
         #self.gyrosensor.reset_angle(angle)
-        pass
         """
         #penser à initialiser 
         angle = 0 
