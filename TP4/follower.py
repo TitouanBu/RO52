@@ -4,9 +4,11 @@ from pybricks.ev3devices import Motor, ColorSensor , UltrasonicSensor, GyroSenso
 from pybricks.tools import wait,DataLog, StopWatch
 from math import cos, sin, radians
 
+isNegatif = None
+
 class Follower:
     def __init__(self, left_motor_port, right_motor_port, color_sensor_port,sonic_sensor_port, gyro_sensor_port,
-                limit, wheel_diameter = 55.5, axle_track = 70, tau = 0.1, max_angle = 100):
+                limit, wheel_diameter = 55.5, axle_track = 104, tau = 0.1, max_angle = 100):
         self.max_angle = max_angle
         self.tau  = tau
         self.old_error = 0
@@ -68,6 +70,7 @@ class Follower:
                     self.error_history += self._current_err()
                 self.drivebase.drive(self.speed, - self._angle(k_p, k_i, k_d))
                 self.turn_rate = - self._angle(k_p, k_i, k_d)
+                self.kalman(- self._angle(k_p, k_i, k_d))
             # Cas blanc :
             else:
                 if self.is_white:
@@ -77,10 +80,12 @@ class Follower:
                     self._clean()
                 self.drivebase.drive(self.speed, self._angle(k_p, k_i, k_d))
                 self.turn_rate = self._angle(k_p, k_i, k_d)
+                self.kalman(self._angle(k_p, k_i, k_d))
+                
             wait(self.tau * 1000)
             # self.actualize_position_drivebase()
             # self.actualize_position_gyro()
-            self.actualize_position_drive(self.turn_rate)
+            # self.actualize_position_drive(self.turn_rate)
 
     def actualize_position_drive(self,drive_angle):
         old_angle = self.angle
@@ -95,7 +100,8 @@ class Follower:
     def actualize_position_drivebase(self):
         state = self.drivebase.state()
         old_angle = self.angle
-        self.angle = radians(state[2])
+        # self.angle = radians(state[2])
+        self.angle = self.angle_kalman
         old_distance = self.distance
         self.distance = state[0]
         old_observed_speed = self.observed_speed
@@ -121,23 +127,20 @@ class Follower:
 
 
     def kalman(self,speed_angle):
-
-
         #calcul angle theoriqe
-        estimation_angle = self.angle_kalman + self.timer.time()*speed_angle + radian(10) # constante à définir
+        estimation_angle = self.angle_kalman + (self.timer.time()/1000)*speed_angle + radians(10) # constante à définir
        
         #calcul de l'angle réel
         gyro_angle = self.gyrosensor.angle()
         self.gyro_angle = radians(gyro_angle)
 
         #estimation erreur et correction
-        K = self.variation / (self.variation + radian(10)) # 10°  ou 30°
+        K = self.variation / (self.variation + radians(10)) # 10°  ou 30°
         error = self.gyro_angle - estimation_angle
         self.angle_kalman = estimation_angle + K*error
 
         self.variation = (1-K)*self.variation
         #self.gyrosensor.reset_angle(angle)
-        pass
         """
         #penser à initialiser 
         angle = 0 
