@@ -29,6 +29,11 @@ class Follower:
         self.timer = StopWatch()
         self.gyrosensor.reset_angle(0)
 
+        #initialisation khalman
+        self.angle_kalman = 0
+        self.gyro_angle = 0
+        self.variation = 0.5 # variable  à définir => variation maximum
+
     def a_deux_point(self, k_p, k_i, k_d, coeff_f, coeff_a, distance_f, distance_a):
         while True:
             #calcule vitesse freinage
@@ -115,9 +120,23 @@ class Follower:
         self.gyrosensor.reset_angle(angle)
 
 
-    def kalman():
+    def kalman(self,speed_angle):
 
-        
+
+        #calcul angle theoriqe
+        estimation_angle = self.angle_kalman + self.timer.time()*speed_angle + radian(10) # constante à définir
+       
+        #calcul de l'angle réel
+        gyro_angle = self.gyrosensor.angle()
+        self.gyro_angle = radians(gyro_angle)
+
+        #estimation erreur et correction
+        K = self.variation / (self.variation + radian(10)) # 10°  ou 30°
+        error = self.gyro_angle - estimation_angle
+        self.angle_kalman = estimation_angle + K*error
+
+        self.variation = (1-K)*self.variation
+        #self.gyrosensor.reset_angle(angle)
         pass
         """
         #penser à initialiser 
