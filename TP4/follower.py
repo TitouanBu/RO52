@@ -114,6 +114,30 @@ class Follower:
         self.log_file.log(self.distance,self.observed_speed,angle,self.timer.time(),self.x,self.y)
         self.gyrosensor.reset_angle(angle)
 
+
+    def kalman():
+
+        
+        pass
+        """
+        #penser à initialiser 
+        angle = 0 
+        previous_angle = 0
+        variation = 0.5  # à définir
+
+        #calcul angle theorique
+
+        estimation_angle = angle + time*speed_angle + radian(10) #calcul du nouveau angle
+
+        #calcul angle veridique
+        
+        K = variation / (variation + radian(10)) # 10°  ou 30°
+        error = angle_gyro - estimation_angle
+        angle = estimation_angle + K*error
+
+        variation = (1-K)*variation
+        """
+
     def _current_err(self):
         return abs(self.sensor.reflection() - self.limit)
 
