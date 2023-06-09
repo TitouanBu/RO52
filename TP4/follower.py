@@ -95,19 +95,19 @@ class Follower:
             
         self.x = self.x + (self.distance)*cos((self.angle+old_angle)/2)
         self.y = self.y + (self.distance)*sin((self.angle+old_angle)/2)
-        self.log_file.log(self.distance,self.observed_speed,self.angle,self.timer.time(),self.x,self.y)
+        self.log_file.log(self.distance,self.observed_speed,self.angle,self.turn_rate,self.x,self.y)
 
     def actualize_position_drivebase(self):
         state = self.drivebase.state()
         old_angle = self.angle
-        # self.angle = radians(state[2])
-        self.angle = self.angle_kalman
+        self.angle = radians(state[2])
+        # self.angle = self.angle_kalman
         old_distance = self.distance
         self.distance = state[0]
         old_observed_speed = self.observed_speed
         self.observed_speed = state[1]
-        """old_turn_rate = self.turn_rate
-        self.turn_rate = state[3]"""
+        old_turn_rate = self.turn_rate
+        self.turn_rate = state[3]
             
         self.x = self.x + (self.distance-old_distance)*cos((self.angle+old_angle)/2)
         self.y = self.y + (self.distance-old_distance)*sin((self.angle+old_angle)/2)
